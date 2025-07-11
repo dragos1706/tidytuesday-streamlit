@@ -92,9 +92,10 @@ chart = (
        .mark_line()
        .encode(
           x="date:T",
-          y="price:Q",
+          y="mean(price):Q",
           color="formulation:N"
        )
 )
 
 st.altair_chart(chart, use_container_width=True)
+
