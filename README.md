@@ -20,6 +20,11 @@ A clean, minimal multipage Streamlit boilerplate for weekly TidyTuesday EDA chal
    streamlit run main.py
 
 3. For each new week:
-- Copy pages/template_week.py → rename it to pages/2_2025_07_08.py, etc.
-- Add that week's CSV to the data/ folder
-- Replace placeholder content in the new template_weekly.py file with your new analysis.
+- Create `pages/YYYY-MM-DD.py` (e.g. `pages/2025-07-08.py`) with that week's analysis.
+- Download the week's data once so `data/week_YYYY-MM-DD/` exists (the page can call `save_tidy_tuesday_data`, or run it from a shell):
+
+   ```bash
+   python -c "from utils.io import save_tidy_tuesday_data; save_tidy_tuesday_data('2025-07-08')"
+   ```
+
+- The page is picked up automatically by `main.py` and listed in the sidebar as `YYYY-MM-DD · <dataset title>`, with the title read from `data/week_YYYY-MM-DD/meta.yaml`.

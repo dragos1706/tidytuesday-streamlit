@@ -1,34 +1,17 @@
 import streamlit as st
+from utils.io import list_week_pages, read_week_title
 
 st.set_page_config(page_title="TidyTuesday EDA", layout="wide")
 
-st.title("📊 TidyTuesday EDA Viewer")
+# Explicit navigation so each week's label keeps its full date (Streamlit's
+# automatic pages/ discovery would strip the leading year as a sort prefix).
+home = st.Page("pages/home.py", title="Home", icon="🏠", default=True)
 
-st.markdown("""
-Welcome! This app hosts your weekly **TidyTuesday** data explorations.
-Use the sidebar to navigate to each week's analysis.
+weeks = [
+    st.Page(path, title=f"{date_str} · {read_week_title(date_str) or 'TidyTuesday'}", url_path=date_str)
+    for date_str, path in list_week_pages()
+]
 
-**Raison d'être**:       
-I've built this app because I wanted to familiarise myself with the Streamlit framework and its capabilities. 
-I feel that TidyTuesday data is a great way to explore this, as it provides a wide range of datasets that can be used for various types of analyses and visualisations.
+sandbox = st.Page("pages/sandbox.py", title="Sandbox", icon="🧪")
 
-The focus of each week's exploration is to showcase how Streamlit could be used to maximise interactivity and visualisation of the data.
-There is one dashboard for each week, which contains a variety of interactive widgets and visualisations that allow users to explore the data in different ways.
-As such , each week's dashboard isn't designed to be an analysis itself, but rather to allow user to analyse the data through the use of interactive widgets and visualisations.
-""")
-
-st.markdown("""
-**How to use this app**:
-- Use the sidebar to navigate to each week's analysis.
-- Each week has its own dashboard, which contains a variety of interactive widgets and visualisations that allow users to explore the data in different ways.
-- You can interact with the widgets to filter the data, change the visualisations, and explore the data in different ways.
-- The app is designed to be interactive, so feel free to explore the data and visualisations as you wish.
-"""
-)
-
-st.markdown("""
-**A note on expectations**:
-            Some of the dashboards might be very basic, as I am still learning how to use Streamlit and its capabilities.
-            I am constantly improving the app and adding new features, so future weeks will likely have more advanced features and visualisations.
-            """
-)
+st.navigation({"": [home], "Weekly dashboards": weeks, "Other": [sandbox]}).run()

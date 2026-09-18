@@ -1,4 +1,5 @@
 import os
+import re
 import pydytuesday
 from pathlib import Path
 import pandas as pd
@@ -49,6 +50,31 @@ def load_tidy_tuesday_data(date_str: str, base_dir: str = "data") -> dict[str, p
         dataframes[name] = df
 
     return dataframes
+
+WEEK_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def read_week_title(date_str: str, base_dir: str = "data") -> str | None:
+    """Return the dataset title from data/week_{date_str}/meta.yaml, or None if unavailable."""
+    meta = Path(base_dir) / f"week_{date_str}" / "meta.yaml"
+    if not meta.exists():
+        return None
+    for line in meta.read_text(encoding="utf-8").splitlines():
+        match = re.match(r'^title:\s*"?(.*?)"?\s*$', line)
+        if match:
+            return match.group(1) or None
+    return None
+
+
+def list_week_pages(pages_dir: str = "pages") -> list[tuple[str, Path]]:
+    """Return (date_str, path) for every pages/YYYY-MM-DD.py, oldest first."""
+    pages = [
+        (p.stem, p)
+        for p in Path(pages_dir).glob("*.py")
+        if WEEK_DATE_RE.match(p.stem)
+    ]
+    return sorted(pages)
+
 
 if __name__ == "__main__":
     # Example usage
